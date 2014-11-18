@@ -1,6 +1,5 @@
 (ns petulant-life.core-test
-  (:require [clojure.test :refer :all]
-            [petulant-life.core :refer :all]))
+  (:require [clojure.test :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
