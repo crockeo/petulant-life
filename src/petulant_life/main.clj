@@ -14,7 +14,16 @@
 (defn destroy []
   (Display/destroy))
 
+; Running the simulation / graphics.
+(defn run []
+  (loop [running true]
+    (if (and running (not (Display/isCloseRequested)))
+      (do (Display/update)
+          (recur true))
+      nil)))
+
 ; Entry point.
 (defn -main [& args]
   (create)
+  (run)
   (destroy))
