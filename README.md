@@ -5,8 +5,14 @@ to music and sounds.
 
 ## Todos:
 
+### Visuals
+
 * *petulant-life.rendering* - Implement `loadShaderProgram`
 * *petulant-life.rendering* - Implement `drawVAO`
+
+### Game of Life
+
+* *petulant-life.life* - Implement multi-layered Game-of-Life stuff
 
 ## Usage
 
