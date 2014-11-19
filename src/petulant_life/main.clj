@@ -7,26 +7,27 @@
 
   (:require [petulant-life.rendering :as r]))
 
-; Defining some width and height constraints to the program.
+;; Defining some width and height constraints to the program.
 (def width 640)
 (def height 480)
 
-; Initializing the OpenGL window.
+;; Initializing the OpenGL window.
 (defn create []
-  (Display/setDisplayMode (DisplayMode. width height))
-  (Display/create (PixelFormat.)
-                  (-> (ContextAttribs. 3 2)
-                      (.withForwardCompatible    true)
-                      (.withProfileCore true)))
-  (Display/setTitle "Petulant Life")
+  (let [bgi 0.9]
+    (Display/setDisplayMode (DisplayMode. width height))
+    (Display/create (PixelFormat.)
+                    (-> (ContextAttribs. 3 2)
+                        (.withForwardCompatible    true)
+                        (.withProfileCore true)))
+    (Display/setTitle "Petulant Life")
+    (GL11/glClearColor bgi bgi bgi 1)))
 
-  (GL11/glClearColor 0.9 0.9 0.9 1))
 
-; Cleaning up the LWJGL context.
+;; Cleaning up the LWJGL context.
 (defn destroy []
   (Display/destroy))
 
-; Running the simulation / graphics.
+;; Running the simulation / graphics.
 (defn run []
   (while (and running (not (Display/isCloseRequested)))
     (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
@@ -42,7 +43,7 @@
      (finally
        (~close-fn))))
 
-; Entry point.
+;; Entry point.
 (defn -main [& args]
   (with-cleanup destroy
     (create)
