@@ -29,12 +29,13 @@
 
 ;; Running the simulation / graphics.
 (defn run []
-  (while (and running (not (Display/isCloseRequested)))
+  (while (not (Display/isCloseRequested))
     (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
         (r/draw-rectangles [[10 10 50 50]
                             [70 10 50 50]
                             [10 70 50 50]
-                            [70 70 50 50]] nil)
+                            [70 70 50 50]]
+                           (r/load-shader-program "resource/gol"))
         (Display/update))))
 
 (defmacro with-cleanup [close-fn & body]

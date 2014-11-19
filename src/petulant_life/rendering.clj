@@ -68,7 +68,7 @@
 
 ;; Loading a shader. It loads all possible extensions for the shader. If there is
 ;; a .vert, it'll load it. If there's a .frag, it'll load it, etc.
-(defn loadShaderProgram [path]
+(defn load-shader-program [path]
   (let [sp (GL20/glCreateProgram)]
     (do ;; Loading the vertex shader - if it exists.
         (if (.exists (as-file (str path ".vert")))
