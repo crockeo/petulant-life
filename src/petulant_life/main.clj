@@ -38,7 +38,7 @@
   (loop [running true]
     (if (and running (not (Display/isCloseRequested)))
       (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
-          (renderSquare 10 10 50 50)
+          (r/drawRectangle 10 10 50 50 nil)
           (Display/update)
           (recur true))
       nil)))

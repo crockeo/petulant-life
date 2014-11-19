@@ -14,7 +14,7 @@
         vbo (GL15/glGenBuffers)
         vao (GL30/glGenVertexArrays)]
     (do ; Setting up the buffered vertices.
-        (.put bvs fvs)
+        (.put bvs (into-array Float/TYPE fvs))
         (.flip bvs)
 
         ; Binding the VAO.
@@ -28,24 +28,24 @@
         (GL20/glVertexAttribPointer 0 3 GL11/GL_FLOAT false 0 0)
 
         ; Performing the callback with the VAO.
-        (callback vao)
+        (callback vao vct)
 
         ; Unbinding and cleaning up the VBO and VAO for now.
         (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
         (GL15/glDeleteBuffers vbo)
 
         (GL30/glBindVertexArray 0)
-        (GL30/glDeleteVertexArrays(vao)))))
+        (GL30/glDeleteVertexArrays vao))))
 
 ; Generating the vertices for a rectangle. Despite it being a rectangle, it
 ; requires 6 points to be rendered using using a VAO.
 (defn generateVerts [x y w h]
   [[x y 0]
-   [(+ x w) y 0]
    [x (+ y h) 0]
-   [(+ x w) y 0]
-   [x (+ y h) 0]
-   [(+ x w) (+ y ) 0]])
+   [(+ x w) (+ y h) 0]
+   [x y 0]
+   [(+ x w) (+ y h) 0]
+   [(+ x w) y 0]])
 
 ; Loading a shader. It loads all possible extensions for the shader. If there is
 ; a .vert, it'll load it. If there's a .frag, it'll load it, etc.
@@ -53,8 +53,12 @@
   nil)
 
 ; Drawing based on the information contained in a VAO with a given shader.
-(defn drawVAO [shader vao]
-  nil)
+(defn drawVAO [shader vao vct]
+  (GL30/glBindVertexArray vao)
+  (GL20/glEnableVertexAttribArray 0)
+  (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (* 2 vct))
+  (GL20/glDisableVertexAttribArray 0)
+  (GL30/glBindVertexArray 0))
 
 ; Drawing a single rectangle using a shader.
 (defn drawRectangle [x y w h shader]
