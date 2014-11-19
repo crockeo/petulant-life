@@ -20,6 +20,7 @@
                         (.withForwardCompatible    true)
                         (.withProfileCore true)))
     (Display/setTitle "Petulant Life")
+    (Display/setResizable true)
     (GL11/glClearColor bgi bgi bgi 1)))
 
 
