@@ -39,7 +39,7 @@
 
 ; Generating the vertices for a rectangle. Despite it being a rectangle, it
 ; requires 6 points to be rendered using using a VAO.
-(defn generateRectangle [x y w h]
+(defn generateRectangle [[x y w h]]
   [[x y 0]
    [x (+ y h) 0]
    [(+ x w) (+ y h) 0]
@@ -49,7 +49,7 @@
 
 ; Generating a number of rectangles.
 (defn generateRectangles [rects]
-  nil)
+  (flatten (map generateRectangle rects)))
 
 ; Loading all of the lines from a file.
 (defn loadFile [path]

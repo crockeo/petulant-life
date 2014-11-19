@@ -38,7 +38,10 @@
   (loop [running true]
     (if (and running (not (Display/isCloseRequested)))
       (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
-          (r/drawRectangle 10 10 50 50 nil)
+          (r/drawRectangles [[10 10 50 50]
+                             [70 10 50 50]
+                             [10 70 50 50]
+                             [70 70 50 50]] nil)
           (Display/update)
           (recur true))
       nil)))
