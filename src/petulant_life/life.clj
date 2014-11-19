@@ -23,12 +23,15 @@
 
 (defn hex-neighbours
   [[x y]]
-  (for [dx [-1 0 1] dy (if (zero? dx) [-2 2] [-1 1])]
+  (for [dx [-1 0 1]
+        dy (if (zero? dx) [-2 2] [-1 1])]
     [(+ dx x) (+ dy y)]))
 
 (defn rect-neighbours
   [[x y]]
-  (for [dx [-1 0 1] dy [-1 0 1] :when (not= 0 dx dy)]
+  (for [dx [-1 0 1]
+        dy [-1 0 1]
+        :when (not= 0 dx dy)]
     [(+ dx x) (+ dy y)]))
 
 (defn stepper
