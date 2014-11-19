@@ -26,12 +26,6 @@
 (defn destroy []
   (Display/destroy))
 
-(defmacro with-cleanup [close-fn & body]
-  `(try
-     (do ~@body)
-     (finally
-       (~close-fn))))
-
 ; Running the simulation / graphics.
 (defn run []
   (while (and running (not (Display/isCloseRequested)))
@@ -41,6 +35,12 @@
                             [10 70 50 50]
                             [70 70 50 50]] nil)
         (Display/update))))
+
+(defmacro with-cleanup [close-fn & body]
+  `(try
+     (do ~@body)
+     (finally
+       (~close-fn))))
 
 ; Entry point.
 (defn -main [& args]
