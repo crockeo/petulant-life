@@ -26,6 +26,12 @@
 (defn destroy []
   (Display/destroy))
 
+(defmacro with-cleanup [close-fn & body]
+  `(try
+     (do ~@body)
+     (finally
+       (~close-fn))))
+
 ; Running the simulation / graphics.
 (defn run []
   (loop [running true]
@@ -41,6 +47,6 @@
 
 ; Entry point.
 (defn -main [& args]
-  (create)
-  (run)
-  (destroy))
+  (with-cleanup destroy
+    (create)
+    (run)))
