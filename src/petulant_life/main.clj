@@ -1,7 +1,9 @@
 (ns petulant-life.main
   (:import (org.lwjgl.opengl DisplayMode
                              Display
-                             GL11)))
+                             GL11))
+
+  (:require [petulant-life.rendering :as r]))
 
 ; Defining some width and height constraints to the program.
 (def width 640)

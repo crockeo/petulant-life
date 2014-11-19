@@ -10,9 +10,9 @@
 (defn withVAO [vs callback]
   (let [fvs (flatten vs)
         vct (/ (count fvs) 3)
-        bvs (BufferUtils/createFloatBuffer (length fvs))
-        vbo GL15/glGenBuffers
-        vao GL30/glGenVertexArrays]
+        bvs (BufferUtils/createFloatBuffer (count fvs))
+        vbo (GL15/glGenBuffers)
+        vao (GL30/glGenVertexArrays)]
     (do ; Setting up the buffered vertices.
         (.put bvs fvs)
         (.flip bvs)
@@ -25,14 +25,14 @@
         (GL15/glBufferData GL15/GL_ARRAY_BUFFER bvs GL15/GL_STATIC_DRAW)
 
         ; Loading the VBO into the VAO.
-        (GL20/glVertexAttributePointer 0 3 GL11/GL_FLOAT false 0 0)
+        (GL20/glVertexAttribPointer 0 3 GL11/GL_FLOAT false 0 0)
 
         ; Performing the callback with the VAO.
         (callback vao)
 
         ; Unbinding and cleaning up the VBO and VAO for now.
         (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
-        (GL15/glDeleteBuffers GL15/GL_ARRAY_BUFFER vbo)
+        (GL15/glDeleteBuffers vbo)
 
         (GL30/glBindVertexArray 0)
         (GL30/glDeleteVertexArrays(vao)))))
