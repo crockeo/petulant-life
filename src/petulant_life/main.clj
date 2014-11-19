@@ -1,7 +1,9 @@
 (ns petulant-life.main
   (:import (org.lwjgl.opengl DisplayMode
                              Display
-                             GL11))
+                             GL11
+                             ContextAttribs
+                             PixelFormat))
 
   (:require [petulant-life.rendering :as r]))
 
@@ -12,7 +14,10 @@
 ; Initializing the OpenGL window.
 (defn create []
   (Display/setDisplayMode (DisplayMode. width height))
-  (Display/create)
+  (Display/create (PixelFormat.)
+                  (-> (ContextAttribs. 3 2)
+                      (.withForwardCompatible    true)
+                      (.withProfileCore true)))
   (Display/setTitle "Petulant Life")
 
   (GL11/glClearColor 0.9 0.9 0.9 1))
