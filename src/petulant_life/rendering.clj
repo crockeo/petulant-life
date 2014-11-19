@@ -39,7 +39,7 @@
 
 ; Generating the vertices for a rectangle. Despite it being a rectangle, it
 ; requires 6 points to be rendered using using a VAO.
-(defn generateVerts [x y w h]
+(defn generateRectangle [x y w h]
   [[x y 0]
    [x (+ y h) 0]
    [(+ x w) (+ y h) 0]
@@ -47,10 +47,41 @@
    [(+ x w) (+ y h) 0]
    [(+ x w) y 0]])
 
+; Generating a number of rectangles.
+(defn generateRectangles [rects]
+  nil)
+
+; Loading all of the lines from a file.
+(defn loadFile [path]
+  (try
+    (let [sb (java.lang.StringBuilder)
+          rd (java.io.BufferedReader (java.io.FileReader path))]
+      (loop []
+          (let [line (.readLine rd)]
+            (if (== line nil)
+              (do (.close rd)
+                  sb)
+              (do (.append sb (.append sb line) "\n")
+                  (recur))))))
+    (catch Exception e (throw e))))
+
+; Loading a specific type of shader at a given path.
+(defn loadShader [path type]
+  (try
+    (let [content (loadFile path)
+          sid     (GL20/glCreateShader type)]
+      (do (GL20/glShaderSource sid content)
+          (GL20/glCompileShader sid)
+          sid))
+    (catch Exception e (.exit System 1)))) ; So very unsafe.
+
 ; Loading a shader. It loads all possible extensions for the shader. If there is
 ; a .vert, it'll load it. If there's a .frag, it'll load it, etc.
 (defn loadShaderProgram [path]
+  (use 'clojure.java.io)
   nil)
+
+; LOAD A SHADER :)
 
 ; Drawing based on the information contained in a VAO with a given shader.
 (defn drawVAO [shader vao vct]
@@ -62,4 +93,8 @@
 
 ; Drawing a single rectangle using a shader.
 (defn drawRectangle [x y w h shader]
-  (withVAO (generateVerts x y w h) (partial drawVAO shader)))
+  (withVAO (generateRectangle x y w h) (partial drawVAO shader)))
+
+; Drawing a number of rectangles using a shader.
+(defn drawRectangles [rects shader]
+  (withVAO (generateRectangles rects) (partial drawVAO shader)))
