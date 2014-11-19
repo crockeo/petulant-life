@@ -51,24 +51,10 @@
 (defn generateRectangles [rects]
   (flatten (map generateRectangle rects)))
 
-; Loading all of the lines from a file.
-(defn loadFile [path]
-  (try
-    (let [sb (java.lang.StringBuilder)
-          rd (java.io.BufferedReader (java.io.FileReader path))]
-      (loop []
-          (let [line (.readLine rd)]
-            (if (== line nil)
-              (do (.close rd)
-                  sb)
-              (do (.append sb (.append sb line) "\n")
-                  (recur))))))
-    (catch Exception e (throw e))))
-
 ; Loading a specific type of shader at a given path.
 (defn loadShader [path type]
   (try
-    (let [content (loadFile path)
+    (let [content (StringBuffer. (slurp path))
           sid     (GL20/glCreateShader type)]
       (do (GL20/glShaderSource sid content)
           (GL20/glCompileShader sid)
