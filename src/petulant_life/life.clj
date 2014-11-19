@@ -66,6 +66,8 @@
 
 (def hex-step  (stepper hex-neighbours   #{2} #{3 4}))
 
+(def torus-step (stepper (mk-torus-neighbours [6 6]) #{3} #{2 3}))
+
 (defn run [step-n]
   (->> (iterate rect-step #{[2 0] [2 1] [2 2] [1 2] [0 1]})
        (drop (dec step-n))
