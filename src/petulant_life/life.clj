@@ -34,6 +34,23 @@
         :when (not= 0 dx dy)]
     [(+ dx x) (+ dy y)]))
 
+(defn mk-wrapping-add [wrap-at]
+  (fn [a b]
+    (let [sum (+ a b)]
+      (cond (> sum wrap-at) (- sum wrap-at)
+            (< sum 0)       (+ wrap-at sum)
+            :else           sum))))
+
+(defn mk-torus-neighbours [[width height]]
+  (let [add-height (mk-wrapping-add height)
+        add-width  (mk-wrapping-add width)]
+   (fn [[x y]]
+     (for [dx [-1 0 1]
+           dy [-1 0 1]
+           :when (not= 0 dx dy)]
+       [(add-width  dx x)
+        (add-height dy y)]))))
+
 (defn stepper
   "Returns a step function for Life-like cell automata.
   neighbours takes a location and return a sequential collection
