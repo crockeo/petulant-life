@@ -25,7 +25,7 @@ game of life in some manner to create more color variations.
 ### Visuals
 
 * *petulant-life.rendering* - Implement `loadShaderProgram`
-* *petulant-life.rendering* - Implement `drawVAO`
+* *petulant-life.rendering* - Implement `drawVAO` - **DONE**
 
 ### Game of Life
 
@@ -33,7 +33,15 @@ game of life in some manner to create more color variations.
 
 ## Usage
 
-I don't know.
+*Assumes you have lein installed. If you don't and you're trying to work with
+Clojure, you're gonna have a bad time.*
+
+```bash
+# To download.
+>$ git clone http://github.com/crockeo/petulant-life.git
+>$ cd petulant-life
+>$ lein <stuff>
+```
 
 ## License
 
