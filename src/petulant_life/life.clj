@@ -1,4 +1,5 @@
-(ns petulant-life.life)
+(ns petulant-life.life
+  (:require [clojure.pprint :refer [pprint]]))
 
 ;; This code was taken from Clojure Programming by Chas Emerick, Brian
 ;; Carper, and Christophe Grand (O’Reilly).
@@ -44,3 +45,10 @@
 (def rect-step (stepper rect-neighbours  #{3} #{2 3}))
 
 (def hex-step  (stepper hex-neighbours   #{2} #{3 4}))
+
+(defn run [step-n]
+  (->> (iterate rect-step #{[2 0] [2 1] [2 2] [1 2] [0 1]})
+       (drop (dec step-n))
+       first
+       (populate (empty-board 6 6))
+       pprint))
