@@ -23,25 +23,15 @@
 (defn destroy []
   (Display/destroy))
 
-; Rendering a square.
-(defn renderSquare [x y w h]
-  (GL11/glColor3f 1 1 1)
-  (GL11/glBegin GL11/GL_QUADS)
-    (GL11/glVertex2f x y)
-    (GL11/glVertex2f (+ x w) y)
-    (GL11/glVertex2f (+ x w) (+ y h))
-    (GL11/glVertex2f x (+ y h))
-  (GL11/glEnd))
-
 ; Running the simulation / graphics.
 (defn run []
   (loop [running true]
     (if (and running (not (Display/isCloseRequested)))
       (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
-          (r/drawRectangles [[10 10 50 50]
-                             [70 10 50 50]
-                             [10 70 50 50]
-                             [70 70 50 50]] nil)
+          (r/draw-rectangles [[10 10 50 50]
+                              [70 10 50 50]
+                              [10 70 50 50]
+                              [70 70 50 50]] nil)
           (Display/update)
           (recur true))
       nil)))
