@@ -68,9 +68,14 @@
 
 (def torus-step (stepper (mk-torus-neighbours [6 6]) #{3} #{2 3}))
 
-(defn run [step-n]
-  (->> (iterate rect-step #{[2 0] [2 1] [2 2] [1 2] [0 1]})
-       (drop (dec step-n))
-       first
-       (populate (empty-board 6 6))
-       pprint))
+(defn run [steps]
+  (loop [steps steps
+         board #{[2 0] [2 1] [2 2] [1 2] [0 1]}]
+    (when (> steps 0)
+      (->> board
+           (populate (empty-board 6 6))
+           pprint)
+      (println)
+      (Thread/sleep 1000)
+      (recur (dec steps)
+             (rect-step board)))))
