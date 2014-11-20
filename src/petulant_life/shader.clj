@@ -19,13 +19,14 @@
         status (GL20/glGetShaderi shader GL20/GL_COMPILE_STATUS)]
     (if status
       shader
-      (.exit System 1))))
+      (do (print (GL20/glGetShaderInfoLog shader 2048))
+          (.exit System) 1))))
 
 ;; Loading a shader if it exists.
 (defn load-if-exists [path type]
   (if (.exists (as-file path))
     (load-shader path type)
-    (print (str path " does not exist."))))
+    (print (str "Loading shader: " path " does not exist.\n"))))
 
 ;; Loading a bunch of shaders and returning them in one map.
 (defn load-shaders [src-path]
@@ -61,4 +62,7 @@
 (defn load-shader-program [src-path]
   (let [shader-program (load-shader-program-raw src-path)
         status (GL20/glGetProgrami shader-program GL20/GL_LINK_STATUS)]
-    shader-program))
+    (if status
+      shader-program
+      (do (print (GL20/glGetProgramInfoLog shader-program 2048))
+          (.exit System 1)))))
