@@ -17,44 +17,48 @@
 (defn load-shader [path type]
   (let [shader (load-shader-raw path type)
         status (GL20/glGetShaderi shader GL20/GL_COMPILE_STATUS)]
-    shader)) ;; TODO: Check for compilation.
+    (if status
+      shader
+      (.exit System 1))))
 
 ;; Loading a shader if it exists.
 (defn load-if-exists [path type]
   (if (.exists (as-file path))
     (load-shader path type)
-    nil))
+    (print (str path " does not exist."))))
 
 ;; Loading a bunch of shaders and returning them in one map.
 (defn load-shaders [src-path]
   (let [vert (load-if-exists (str src-path ".vert") GL20/GL_VERTEX_SHADER)
         frag (load-if-exists (str src-path ".frag") GL20/GL_FRAGMENT_SHADER)
         geom (load-if-exists (str src-path ".geom") GL32/GL_GEOMETRY_SHADER)]
-    {vert :vert
-     frag :frag
-     geom :geom}))
+    {:vert vert
+     :frag frag
+     :geom geom}))
 
 ;; Attaching a bunch of shaders to a shader program if they exist.
-(defn attach-if-exists [shaders program]
+(defn attach-if-exists [shader-program shaders]
   (if (get shaders :vert)
-    (GL20/glAttachShader program (get shaders :vert))
+    (GL20/glAttachShader shader-program (get shaders :vert))
     nil)
 
   (if (get shaders :frag)
-    (GL20/glAttachShader program (get shaders :frag))
+    (GL20/glAttachShader shader-program (get shaders :frag))
     nil)
 
   (if (get shaders :geom)
-    (GL20/glAttachShader program (get shaders :geom))
+    (GL20/glAttachShader shader-program (get shaders :geom))
     nil))
 
 ;; Loading a whole shader program.
 (defn load-shader-program-raw [src-path]
-  (let []
-    nil)) ;; TODO: Load the program.
+  (let [shader-program (GL20/glCreateProgram)]
+    (attach-if-exists shader-program (load-shaders src-path))
+    (GL20/glLinkProgram shader-program)
+    shader-program))
 
 ;; Loading a whole shader program - and then checking if it linked.
 (defn load-shader-program [src-path]
   (let [shader-program (load-shader-program-raw src-path)
         status (GL20/glGetProgrami shader-program GL20/GL_LINK_STATUS)]
-    shader-program)) ;; TODO: Check for linking.
+    shader-program))
