@@ -24,8 +24,10 @@ game of life in some manner to create more color variations.
 
 ### Visuals
 
-* *petulant-life.rendering* - Implement `loadShaderProgram`
+* *petulant-life.rendering* - Implement `loadShaderProgram` **DONE** (though,
+the more up-to-date version is in `petulant-life.shader`.
 * *petulant-life.rendering* - Implement `drawVAO` - **DONE**
+* *petulant-life.rendering* - Get shaders mixing well with the vertex arrays.
 
 ### Game of Life
 
