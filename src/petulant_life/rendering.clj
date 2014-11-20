@@ -64,28 +64,41 @@
       (do (GL20/glShaderSource sid content)
           (GL20/glCompileShader sid)
           sid))
-    (catch Exception e (.exit System 1)))) ;; So very unsafe.
+    (catch Exception e (.exit System 1))))
+
+;; Loading each type of shader from a given path.
+(defn load-each-shader [path]
+  (let [vert (if (.exists (as-file (str path ".vert")))
+               (load-shader (str path ".vert") GL20/GL_VERTEX_SHADER)
+               nil)
+
+        frag (if (.exists (as-file (str path ".frag")))
+               (load-shader (str path ".frag") GL20/GL_FRAGMENT_SHADER)
+               nil)
+
+        geom (if (.exists (as-file (str path ".geom")))
+               (load-shader (str path ".geom") GL32/GL_GEOMETRY_SHADER)
+               nil)]
+    {:vert vert :frag frag :geom geom}))
 
 ;; Loading a shader. It loads all possible extensions for the shader. If there is
 ;; a .vert, it'll load it. If there's a .frag, it'll load it, etc.
 (defn load-shader-program [path]
-  (let [sp (GL20/glCreateProgram)]
-    (do ;; Loading the vertex shader - if it exists.
-        (if (.exists (as-file (str path ".vert")))
-          (GL20/glAttachShader sp (load-shader (str path ".vert")
-                                               GL20/GL_VERTEX_SHADER))
+  (let [ss (load-each-shader path)
+        sp (GL20/glCreateProgram)]
+    (do (if (get ss :vert)
+          (GL20/glAttachShader sp (get ss :vert))
           nil)
 
-        ;; Loading the fragment shader - if it exists.
-        (if (.exists (as-file (str path ".frag")))
-          (GL20/glAttachShader sp (load-shader (str path ".frag")
-                                               GL20/GL_FRAGMENT_SHADER))
+        (if (get ss :frag)
+          (GL20/glAttachShader sp (get ss :frag))
           nil)
 
-        ;; Loading the geometry shader - if it exists.
-        (if (.exists (as-file (str path ".geom")))
-          (GL20/glAttachShader sp (load-shader (str path ".geom")
-                                               GL32/GL_GEOMETRY_SHADER)))
+        (if (get ss :geom)
+          (GL20/glAttachShader sp (get ss :geom))
+          nil)
+
+        (GL20/glLinkProgram sp)
 
         sp)))
 
