@@ -95,13 +95,8 @@
   (GL30/glBindVertexArray vao)
   (GL20/glEnableVertexAttribArray 0)
 
-  ;; Setting up the shader.
-  (GL20/glUseProgram shader)
-
+  ;; Actually drawing the square.
   (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (* 2 vct))
-
-  ;; Cleaning up the shader.
-  (GL20/glUseProgram 0)
 
   ;; Cleaning up the VAO.
   (GL20/glDisableVertexAttribArray 0)
