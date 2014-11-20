@@ -15,7 +15,8 @@
 
 ;; Loading a shader and then checking for if it compiled correctly.
 (defn load-shader [path type]
-  (let [shader (load-shader-raw path type)]
+  (let [shader (load-shader-raw path type)
+        status (GL20/glGetShaderi shader GL20/GL_COMPILE_STATUS)]
     shader)) ;; TODO: Check for compilation.
 
 ;; Loading a shader if it exists.
@@ -54,5 +55,6 @@
 
 ;; Loading a whole shader program - and then checking if it linked.
 (defn load-shader-program [src-path]
-  (let [shader-program (load-shader-program-raw src-path)]
+  (let [shader-program (load-shader-program-raw src-path)
+        status (GL20/glGetProgrami shader-program GL20/GL_LINK_STATUS)]
     shader-program)) ;; TODO: Check for linking.
