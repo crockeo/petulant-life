@@ -5,7 +5,8 @@
                              ContextAttribs
                              PixelFormat))
 
-  (:require [petulant-life.rendering :as r]))
+  (:require [petulant-life.rendering :as r]
+            [petulant-life.shader :as s]))
 
 ;; Defining some width and height constraints to the program.
 (def width 640)
@@ -29,14 +30,14 @@
   (Display/destroy))
 
 ;; Running the simulation / graphics.
-(defn run []
+(defn run [shader]
   (while (not (Display/isCloseRequested))
     (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
         (r/draw-rectangles [[10 10 50 50]
                             [70 10 50 50]
                             [10 70 50 50]
                             [70 70 50 50]]
-                           (r/load-shader-program "resource/gol"))
+                           shader)
         (Display/update))))
 
 (defmacro with-cleanup [close-fn & body]
@@ -49,4 +50,4 @@
 (defn -main [& args]
   (with-cleanup destroy
     (create)
-    (run)))
+    (run (s/load-shader-program "resources/gol"))))
