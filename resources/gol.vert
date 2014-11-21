@@ -1,9 +1,9 @@
 #version 330
 
+uniform vec2 in_Size;
 layout(location = 0)in vec2 vert;
 
 void main() {
-    vec2 in_Size = vec2(640, 480);
     vec2 tempVert = vert;
 
     // Scaling the x-axis.

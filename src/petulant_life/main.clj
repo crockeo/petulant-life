@@ -9,13 +9,13 @@
             [petulant-life.shader :as s]))
 
 ;; Defining some width and height constraints to the program.
-(def width 640)
-(def height 480)
+(def window-width 640)
+(def window-height 480)
 
 ;; Initializing the OpenGL window.
 (defn create []
   (let [bgi 0.9]
-    (Display/setDisplayMode (DisplayMode. width height))
+    (Display/setDisplayMode (DisplayMode. window-width window-height))
     (Display/create (PixelFormat.)
                     (-> (ContextAttribs. 3 2)
                         (.withForwardCompatible    true)

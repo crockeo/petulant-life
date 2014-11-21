@@ -1,5 +1,6 @@
 (ns petulant-life.rendering
-  (:require [clojure.java.io :refer [as-file]])
+  (:require [clojure.java.io :refer [as-file]]
+            [petulant-life.main :refer [window-width window-height]])
 
   (:import (org.lwjgl.opengl ARBSeparateShaderObjects
                              GL41
@@ -64,6 +65,9 @@
 
   ;; Using a shader.
   (GL20/glUseProgram shader)
+
+  ;; Setting the uniform for the window size.
+  (GL20/glUniform2f 0 window-width window-height)
 
   ;; Actually drawing the square.
   (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (* 2 vct))
