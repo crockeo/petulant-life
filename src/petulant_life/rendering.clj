@@ -11,120 +11,70 @@
 
            (org.lwjgl BufferUtils)))
 
-;; Creating a VertexArrayObject out of a set of vertices.
-(defn with-vao [vs callback]
+;; Creating a VertexBufferObject out of a set of vertices.
+(defn make-vbo [vs]
   (let [fvs (flatten vs)
-        vct (/ (count fvs) 3)
         bvs (BufferUtils/createFloatBuffer (count fvs))
-        vbo (GL15/glGenBuffers)
-        vao (GL30/glGenVertexArrays)]
-    (do ;; Setting up the buffered vertices.
-        (.put bvs (into-array Float/TYPE fvs))
-        (.flip bvs)
+        vbo (GL15/glGenBuffers)]
+    (.put bvs (into-array Float/TYPE fvs))
+    (.flip bvs)
 
-        ;; Binding the VAO.
-        (GL30/glBindVertexArray vao)
+    (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
+    (GL15/glBufferData GL15/GL_ARRAY_BUFFER bvs GL15/GL_STATIC_DRAW)
 
-        ;; Binding and setting the VBO.
-        (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
-        (GL15/glBufferData GL15/GL_ARRAY_BUFFER bvs GL15/GL_STATIC_DRAW)
+    (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
 
-        ;; Loading the VBO into the VAO.
-        (GL20/glVertexAttribPointer 0 3 GL11/GL_FLOAT false 0 0)
+    vbo))
 
-        ;; Performing the callback with the VAO.
-        (callback vao vct)
+;; Deleting a VertexBufferObject.
+(defn delete-vbo [vbo]
+  (GL15/glDeleteBuffers vbo))
 
-        ;; Unbinding and cleaning up the VBO and VAO for now.
-        (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
-        (GL15/glDeleteBuffers vbo)
+;; Creating a VertexArrayObject from a VertexBufferObject.
+(defn make-vao [vbo]
+  (let [vao (GL30/glGenVertexArrays)]
+    (do
+      (GL30/glBindVertexArray vao)
+      (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
+      (GL20/glVertexAttribPointer 0 2 GL11/GL_FLOAT false 0 0)
+      (GL30/glBindVertexArray 0)
+      vao)))
 
-        (GL30/glBindVertexArray 0)
-        (GL30/glDeleteVertexArrays vao))))
+;; Deleting a VertexArrayObject.
+(defn delete-vao [vao]
+  (GL30/glBindVertexArray 0)
+  (GL30/glDeleteVertexArrays vao))
+
+;; Performing some action in the context of having access to a
+;; VertexBufferObject, a VertexArrayObject, and a count of the vertices.
+(defmacro with-vao [vs & body]
+  (let [vbo (make-vbo vs)
+        vao (make-vao vbo)
+        vct (count vs)]
+    (GL30/glBindVertexArray vao)
+    (GL20/glEnableVertexAttribArray 0)
+
+    ~body
+
+    (delete-vao vao)
+    (delete-vbo vbo)))
 
 ;; Generating the vertices for a rectangle. Despite it being a rectangle, it
 ;; requires 6 points to be rendered using using a VAO.
 (defn generate-rectangle [[x y w h]]
-  [[x y 0]
-   [x (+ y h) 0]
-   [(+ x w) (+ y h) 0]
-   [x y 0]
-   [(+ x w) (+ y h) 0]
-   [(+ x w) y 0]])
+  [[x y]
+   [x (+ y h)]
+   [(+ x w) (+ y h)]
+   [x y]
+   [(+ x w) (+ y h)]
+   [(+ x w) y]])
 
 ;; Generating a number of rectangles.
 (defn generate-rectangles [rects]
   (flatten (map generate-rectangle rects)))
 
-;; Loading a specific type of shader at a given path.
-(defn load-shader [path type]
-  (try
-    (let [content (StringBuffer. (slurp path))
-          sid     (GL20/glCreateShader type)]
-      (do (GL20/glShaderSource sid content)
-          (GL20/glCompileShader sid)
-          sid))
-    (catch Exception e (.exit System 1))))
-
-;; Loading each type of shader from a given path.
-(defn load-each-shader [path]
-  (let [vert (if (.exists (as-file (str path ".vert")))
-               (load-shader (str path ".vert") GL20/GL_VERTEX_SHADER)
-               nil)
-
-        frag (if (.exists (as-file (str path ".frag")))
-               (load-shader (str path ".frag") GL20/GL_FRAGMENT_SHADER)
-               nil)
-
-        geom (if (.exists (as-file (str path ".geom")))
-               (load-shader (str path ".geom") GL32/GL_GEOMETRY_SHADER)
-               nil)]
-    {:vert vert :frag frag :geom geom}))
-
-;; Loading a shader. It loads all possible extensions for the shader. If there is
-;; a .vert, it'll load it. If there's a .frag, it'll load it, etc.
-(defn load-shader-program [path]
-  (let [ss (load-each-shader path)
-        sp (GL20/glCreateProgram)]
-    (do (if (get ss :vert)
-          (GL20/glAttachShader sp (get ss :vert))
-          nil)
-
-        (if (get ss :frag)
-          (GL20/glAttachShader sp (get ss :frag))
-          nil)
-
-        (if (get ss :geom)
-          (GL20/glAttachShader sp (get ss :geom))
-          nil)
-
-        (GL20/glLinkProgram sp)
-
-        sp)))
-
-;; Drawing based on the information contained in a VAO with a given shader.
-(defn draw-vao [shader vao vct]
-  ;; Setting up the VAO.
-  (GL30/glBindVertexArray vao)
-  (GL20/glEnableVertexAttribArray 0)
-
-  ;; Using a shader.
-  (GL20/glUseProgram shader)
-
-  ;; Actually drawing the square.
-  (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (* 2 vct))
-
-  ;; Disabling the shader.
-  (GL20/glUseProgram 0)
-
-  ;; Cleaning up the VAO.
-  (GL20/glDisableVertexAttribArray 0)
-  (GL30/glBindVertexArray 0))
-
-;; Drawing a single rectangle using a shader.
-(defn draw-rectangle [x y w h shader]
-  (with-vao (generate-rectangle x y w h) (partial draw-vao shader)))
-
-;; Drawing a number of rectangles using a shader.
-(defn draw-rectangles [rects shader]
-  (with-vao (generate-rectangles rects) (partial draw-vao shader)))
+;; Drawing a rectangle.
+(defn draw-rectangle [spec]
+  (with-vao (generate-rectangle spec) ;; Throws up an error during compile (but
+                                      ;; it's a RuntimeExcepion?))
+    (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (* 2 vct))))
