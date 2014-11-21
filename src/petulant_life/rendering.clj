@@ -30,7 +30,7 @@
         (GL15/glBufferData GL15/GL_ARRAY_BUFFER bvs GL15/GL_STATIC_DRAW)
 
         ;; Loading the VBO into the VAO.
-        (GL20/glVertexAttribPointer 0 3 GL11/GL_FLOAT false 0 0)
+        (GL20/glVertexAttribPointer 0 2 GL11/GL_FLOAT false 0 0)
 
         ;; Performing the callback with the VAO.
         (callback vao vct)
@@ -45,12 +45,12 @@
 ;; Generating the vertices for a rectangle. Despite it being a rectangle, it
 ;; requires 6 points to be rendered using using a VAO.
 (defn generate-rectangle [[x y w h]]
-  [[x y 0]
-   [x (+ y h) 0]
-   [(+ x w) (+ y h) 0]
-   [x y 0]
-   [(+ x w) (+ y h) 0]
-   [(+ x w) y 0]])
+  [[x y]
+   [x (+ y h)]
+   [(+ x w) (+ y h)]
+   [x y]
+   [(+ x w) (+ y h)]
+   [(+ x w) y]])
 
 ;; Generating a number of rectangles.
 (defn generate-rectangles [rects]
