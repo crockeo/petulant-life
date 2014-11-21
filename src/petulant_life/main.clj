@@ -19,6 +19,9 @@
                         (.withProfileCore true)))
     (Display/setTitle "Petulant Life")
     (Display/setResizable true)
+
+    (GL11/glEnable GL11/GL_BLEND)
+    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
     (GL11/glClearColor bgi bgi bgi 1)))
 
 
@@ -38,6 +41,7 @@
         (r/draw-rectangles [[70 10 50 50]]
                            shader
                            [0 1 0 1])
+
         (Display/update))))
 
 (defmacro with-cleanup [close-fn & body]
