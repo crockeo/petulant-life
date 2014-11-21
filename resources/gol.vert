@@ -1,9 +1,18 @@
 #version 330
 
+// Specifying the uniforms.
 uniform vec2 in_Size;
+uniform vec4 in_Color;
+
+// Specifying the inputs.
 layout(location = 0)in vec2 vert;
 
+out vec4 pass_Color;
+
 void main() {
+    // Setting the output color.
+    pass_Color = in_Color;
+
     vec2 tempVert = vert;
 
     // Scaling the x-axis.

@@ -35,7 +35,8 @@
     (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
         (r/draw-rectangles [[0 0 1 1]      ;; For testing no shader-based scaling.
                             [10 10 50 50]] ;; For testing    shader-based scaling.
-                           shader)
+                           shader
+                           [1 0 0 1])
         (Display/update))))
 
 (defmacro with-cleanup [close-fn & body]
