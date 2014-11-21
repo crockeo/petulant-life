@@ -48,4 +48,4 @@
 (defn -main [& args]
   (with-cleanup destroy
     (create)
-    (run (s/load-shader-program "resources/gol_new"))))
+    (run (s/load-shader-program "resources/gol"))))
