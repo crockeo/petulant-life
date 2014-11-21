@@ -33,10 +33,8 @@
 (defn run [shader]
   (while (not (Display/isCloseRequested))
     (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
-        (r/draw-rectangles [[10 10 50 50]
-                            [70 10 50 50]
-                            [10 70 50 50]
-                            [70 70 50 50]]
+        (r/draw-rectangles [[0 0 1 1]      ;; For testing no shader-based scaling.
+                            [10 10 50 50]] ;; For testing    shader-based scaling.
                            shader)
         (Display/update))))
 
@@ -50,4 +48,4 @@
 (defn -main [& args]
   (with-cleanup destroy
     (create)
-    (run (s/load-shader-program "resources/gol"))))
+    (run (s/load-shader-program "resources/gol_new"))))
