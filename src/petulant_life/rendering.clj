@@ -1,6 +1,6 @@
 (ns petulant-life.rendering
   (:require [clojure.java.io :refer [as-file]]
-            [petulant-life.main :refer [window-width window-height]])
+            [petulant-life.config :as c])
 
   (:import (org.lwjgl.opengl ARBSeparateShaderObjects
                              GL41
@@ -67,7 +67,10 @@
   (GL20/glUseProgram shader)
 
   ;; Setting the uniform for the window size.
-  (GL20/glUniform2f (GL20/glGetUniformLocation shader "in_Size") window-width window-height)
+  (GL20/glUniform2f (GL20/glGetUniformLocation shader "in_Size")
+                    c/window-width
+                    c/window-height)
+
   (GL20/glUniform4f (GL20/glGetUniformLocation shader "in_Color") r g b a)
 
   ;; Actually drawing the square.

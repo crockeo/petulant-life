@@ -6,16 +6,13 @@
                              PixelFormat))
 
   (:require [petulant-life.rendering :as r]
+            [petulant-life.config :as c]
             [petulant-life.shader :as s]))
-
-;; Defining some width and height constraints to the program.
-(def window-width 640)
-(def window-height 480)
 
 ;; Initializing the OpenGL window.
 (defn create []
   (let [bgi 0.9]
-    (Display/setDisplayMode (DisplayMode. window-width window-height))
+    (Display/setDisplayMode (DisplayMode. c/window-width c/window-height))
     (Display/create (PixelFormat.)
                     (-> (ContextAttribs. 3 2)
                         (.withForwardCompatible    true)
@@ -37,6 +34,10 @@
                             [10 10 50 50]] ;; For testing    shader-based scaling.
                            shader
                            [1 0 0 1])
+
+        (r/draw-rectangles [[70 10 50 50]]
+                           shader
+                           [0 1 0 1])
         (Display/update))))
 
 (defmacro with-cleanup [close-fn & body]
