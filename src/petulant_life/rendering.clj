@@ -54,7 +54,7 @@
     (GL30/glBindVertexArray vao)
     (GL20/glEnableVertexAttribArray 0)
 
-    ~body
+    ~@body
 
     (delete-vao vao)
     (delete-vbo vbo)))
@@ -75,6 +75,5 @@
 
 ;; Drawing a rectangle.
 (defn draw-rectangle [spec]
-  (with-vao (generate-rectangle spec) ;; Throws up an error during compile (but
-                                      ;; it's a RuntimeExcepion?))
-    (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (* 2 vct))))
+  (macroexpand '(with-vao (generate-rectangle spec)
+                  (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (* 2 vct)))))
