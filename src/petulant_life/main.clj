@@ -7,7 +7,8 @@
 
   (:require [petulant-life.rendering :as r]
             [petulant-life.config :as c]
-            [petulant-life.shader :as s]))
+            [petulant-life.shader :as s]
+            [petulant-life.life   :as l]))
 
 ;; Initializing the OpenGL window.
 (defn create []
@@ -39,19 +40,17 @@
          life-board)))
 
 ;; Running the simulation / graphics.
-(defn run [shader]
-  (while (not (Display/isCloseRequested))
-    (do (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
-        (r/draw-rectangles [[0 0 1 1]      ;; For testing no shader-based scaling.
-                            [10 10 50 50]] ;; For testing    shader-based scaling.
-                           shader
-                           [1 0 0 1])
+(defn run [shader stepper]
+  (loop [board #{[2 0] [2 1] [2 2] [1 2] [0 1]}]
+   (when-not (Display/isCloseRequested)
+     (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
+     (r/draw-rectangles (life->screen 50 10 board)
+                        shader
+                        [0 1 0 1])
 
-        (r/draw-rectangles (life->screen 50 10 [[0 0] [1 0] [1 1]])
-                           shader
-                           [0 1 0 1])
-
-        (Display/update))))
+     (Display/update)
+     (Thread/sleep 300)
+     (recur (stepper board)))))
 
 (defmacro with-cleanup [close-fn & body]
   `(try
@@ -63,4 +62,5 @@
 (defn -main [& args]
   (with-cleanup destroy
     (create)
-    (run (s/load-shader-program "resources/gol"))))
+    (run (s/load-shader-program "resources/gol")
+      l/torus-step)))
