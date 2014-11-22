@@ -41,16 +41,24 @@
 
 ;; Running the simulation / graphics.
 (defn run [shader stepper]
-  (loop [board #{[2 0] [2 1] [2 2] [1 2] [0 1]}]
-   (when-not (Display/isCloseRequested)
-     (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
-     (r/draw-rectangles (life->screen 5 2 board)
-                        shader
-                        [0 1 0 1])
+  (let [colors [[1 0 0 1]
+                [0 1 0 1]
+                [0 0 1 1]]]
+   (loop [board [#{[2 0] [2 1] [2 2] [1 2] [0 1]}
+                 #{[4 12] [3 12] [4 10] [4 11] [2 11]}
+                 #{[9 25] [9 23] [9 24] [7 24] [8 25]}]]
+     (when-not (Display/isCloseRequested)
+       (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
+       (dorun
+        (map (fn [b c]
+               (r/draw-rectangles (life->screen 5 2 b)
+                                  shader
+                                  c))
+             board colors))
 
-     (Display/update)
-     (Thread/sleep 100)
-     (recur (stepper board)))))
+       (Display/update)
+       (Thread/sleep 100)
+       (recur (map stepper board))))))
 
 (defmacro with-cleanup [close-fn & body]
   `(try
