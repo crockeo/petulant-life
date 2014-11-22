@@ -37,7 +37,7 @@
 (defn mk-wrapping-add [wrap-at]
   (fn [a b]
     (let [sum (+ a b)]
-      (cond (> sum wrap-at) (- sum wrap-at)
+      (cond (>= sum wrap-at) (- sum wrap-at)
             (< sum 0)       (+ wrap-at sum)
             :else           sum))))
 
