@@ -23,9 +23,8 @@
 
 ;; Loading a shader if it exists.
 (defn load-if-exists [path type]
-  (if (.exists (as-file path))
-    (load-shader path type)
-    nil))
+  (when (.exists (as-file path))
+    (load-shader path type)))
 
 ;; Loading a bunch of shaders and returning them in one map.
 (defn load-shaders [src-path]
