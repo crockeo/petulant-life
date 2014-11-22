@@ -76,6 +76,6 @@
            (populate (empty-board 6 6))
            pprint)
       (println)
-      (Thread/sleep 1000)
+      (Thread/sleep 750)
       (recur (dec steps)
-             (rect-step board)))))
+             (torus-step board)))))
