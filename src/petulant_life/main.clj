@@ -5,7 +5,8 @@
                              ContextAttribs
                              PixelFormat))
 
-  (:require [petulant-life.rendering :as r]
+  (:require [clojure.set :refer [union]]
+            [petulant-life.rendering :as r]
             [petulant-life.config :as c]
             [petulant-life.shader :as s]
             [petulant-life.life   :as l]))
@@ -39,26 +40,43 @@
             size size])
          life-board)))
 
+;; Returns true if the random chance succeeded. False otherwise.
+(defn chancey [chance]
+  (let [rand (rand-int 100)]
+    (if (< rand chance)
+      true
+      false)))
+
+;; Generating a random board.
+(defn generate-board [chance minx maxx miny maxy]
+  (reduce union #{} (flatten (map (fn [x]
+                                    (map (fn [y]
+                                           (if (chancey chance)
+                                             #{[x y]}
+                                             #{}))
+                                         (range miny maxy)))
+                                  (range minx maxx)))))
+
 ;; Running the simulation / graphics.
 (defn run [shader stepper]
-  (let [colors [[1 0 0 1]
-                [0 1 0 1]
-                [0 0 1 1]]]
-   (loop [board [#{[2 0] [2 1] [2 2] [1 2] [0 1]}
-                 #{[4 12] [3 12] [4 10] [4 11] [2 11]}
-                 #{[9 25] [9 23] [9 24] [7 24] [8 25]}]]
-     (when-not (Display/isCloseRequested)
-       (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
-       (dorun
-        (map (fn [b c]
-               (r/draw-rectangles (life->screen 5 2 b)
-                                  shader
-                                  c))
-             board colors))
+  (let [colors [[1 0 0 0.5]
+                [0 1 0 0.5]
+                [0 0 1 0.5]]]
+    (loop [boards [(generate-board 30 0 50 0 50)
+                   (generate-board 30 0 50 0 50)
+                   (generate-board 30 0 50 0 50)]]
+      (when-not (Display/isCloseRequested)
+        (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
+        (dorun
+         (map (fn [b c]
+                (r/draw-rectangles (life->screen 5 2 b)
+                                   shader
+                                   c))
+              boards colors))
 
-       (Display/update)
-       (Thread/sleep 100)
-       (recur (map stepper board))))))
+        (Display/update)
+        (Thread/sleep 100)
+        (recur (map stepper boards))))))
 
 (defmacro with-cleanup [close-fn & body]
   `(try
