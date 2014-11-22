@@ -29,6 +29,15 @@
 (defn destroy []
   (Display/destroy))
 
+(defn life->screen [size padding life-board]
+  (let [coord (fn [x] (+ (* padding
+                            (inc x))
+                         (* size x)))]
+    (map (fn [[x y]]
+           [(coord x) (coord y)
+            size size])
+         life-board)))
+
 ;; Running the simulation / graphics.
 (defn run [shader]
   (while (not (Display/isCloseRequested))
@@ -38,7 +47,7 @@
                            shader
                            [1 0 0 1])
 
-        (r/draw-rectangles [[70 10 50 50]]
+        (r/draw-rectangles (life->screen 50 10 [[0 0] [1 0] [1 1]])
                            shader
                            [0 1 0 1])
 
