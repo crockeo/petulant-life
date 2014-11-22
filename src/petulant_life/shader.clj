@@ -15,9 +15,9 @@
 
 ;; Loading a shader and then checking for if it compiled correctly.
 (defn load-shader [path type]
-  (let [shader (load-shader-raw path type)
-        status (GL20/glGetShaderi shader GL20/GL_COMPILE_STATUS)]
-    (if (= status 1)
+  (let [shader (load-shader-raw path type)]
+    (if (= (GL20/glGetShaderi shader GL20/GL_COMPILE_STATUS)
+           1)
       shader
       (print (str "SHADER COMPILER ERROR: " (GL20/glGetShaderInfoLog shader 2048))))))
 
@@ -53,8 +53,8 @@
 
 ;; Loading a whole shader program - and then checking if it linked.
 (defn load-shader-program [src-path]
-  (let [shader-program (load-shader-program-raw src-path)
-        status (GL20/glGetProgrami shader-program GL20/GL_LINK_STATUS)]
-    (if (= status 1)
+  (let [shader-program (load-shader-program-raw src-path)]
+    (if (= (GL20/glGetProgrami shader-program GL20/GL_LINK_STATUS)
+           1)
       shader-program
       (print (str "SHADER LINKER ERROR: " (GL20/glGetProgramInfoLog shader-program 2048))))))
