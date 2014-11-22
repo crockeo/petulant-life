@@ -38,17 +38,11 @@
 
 ;; Attaching a bunch of shaders to a shader program if they exist.
 (defn attach-if-exists [shader-program shaders]
-  (if (get shaders :vert)
-    (GL20/glAttachShader shader-program (get shaders :vert))
-    nil)
-
-  (if (get shaders :frag)
-    (GL20/glAttachShader shader-program (get shaders :frag))
-    nil)
-
-  (if (get shaders :geom)
-    (GL20/glAttachShader shader-program (get shaders :geom))
-    nil))
+  (dorun
+   (map (fn [[key shader]]
+          (when shader
+            (GL20/glAttachShader shader-program shader)))
+        shaders)))
 
 ;; Loading a whole shader program.
 (defn load-shader-program-raw [src-path]
