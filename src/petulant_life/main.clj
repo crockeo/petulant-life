@@ -44,12 +44,12 @@
   (loop [board #{[2 0] [2 1] [2 2] [1 2] [0 1]}]
    (when-not (Display/isCloseRequested)
      (GL11/glClear GL11/GL_COLOR_BUFFER_BIT)
-     (r/draw-rectangles (life->screen 50 10 board)
+     (r/draw-rectangles (life->screen 5 2 board)
                         shader
                         [0 1 0 1])
 
      (Display/update)
-     (Thread/sleep 300)
+     (Thread/sleep 100)
      (recur (stepper board)))))
 
 (defmacro with-cleanup [close-fn & body]
@@ -63,4 +63,4 @@
   (with-cleanup destroy
     (create)
     (run (s/load-shader-program "resources/gol")
-      l/torus-step)))
+      l/rect-step)))
