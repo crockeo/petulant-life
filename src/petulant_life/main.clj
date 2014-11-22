@@ -58,9 +58,11 @@
      (finally
        (~close-fn))))
 
+(def torus-step (l/stepper (l/mk-torus-neighbours [91 68]) #{3} #{2 3}))
+
 ;; Entry point.
 (defn -main [& args]
   (with-cleanup destroy
     (create)
     (run (s/load-shader-program "resources/gol")
-      l/rect-step)))
+      torus-step)))
