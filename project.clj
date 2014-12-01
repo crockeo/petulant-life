@@ -8,17 +8,14 @@
                  [overtone "0.9.1"]
                  [org.lwjgl.lwjgl/lwjgl "2.9.1"]
                  [org.lwjgl.lwjgl/lwjgl-platform "2.9.1"
-                  :classifier "natives-linux"
-                  ;; LWJGL stores natives in the root of the jar; this
-                  ;; :native-prefix will extract them.
-                  :native-prefix ""]
-                 [org.lwjgl.lwjgl/lwjgl-platform "2.9.1"
-                  :classifier "natives-osx"
-                  ;; LWJGL stores natives in the root of the jar; this
-                  ;; :native-prefix will extract them.
-                  :native-prefix ""]
-                 [org.lwjgl.lwjgl/lwjgl-platform "2.9.1"
-                  :classifier "natives-windows"
+                  :classifier ~(str "natives-"
+                                    (let [os-name (System/getProperty "os.name")]
+                                     (cond
+                                      (= "Mac OS X"
+                                         os-name) "osx"
+                                      (re-find #"^Windows" os-name) "windows"
+                                      :else "linux")))
+
                   ;; LWJGL stores natives in the root of the jar; this
                   ;; :native-prefix will extract them.
                   :native-prefix ""]]
